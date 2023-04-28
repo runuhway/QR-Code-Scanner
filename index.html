@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>QR Code Scanner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <video id="camera" width="100%" height="auto"></video>
+    <canvas id="canvas" style="display: none;"></canvas>
+    <script>
+        const video = document.getElementById('camera');
+        const canvas = document.getElementById('canvas').getContext('2d');
+
+        navigator.mediaDevices.getUserMedia({video: {facingMode: "environment"}})
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(err => {
+                console.error('Could not access the camera. Error: ', err);
+            });
+
+        video.addEventListener('loadeddata', () => {
+            canvas.canvas.width = video.videoWidth;
+            canvas.canvas.height = video.videoHeight;
+            setInterval(() => {
+                canvas.drawImage(video, 0, 0, canvas.canvas.width, canvas.canvas.height);
+                const imageData = canvas.getImageData(0, 0, canvas.canvas.width, canvas.canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                    inversionAttempts: "dontInvert",
+                });
+                if (code) {
+                    console.log('Found QR code:', code.data);
+                    // You can do something with the QR code data here
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
