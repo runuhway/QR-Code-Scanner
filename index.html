@@ -13,33 +13,26 @@
     </style>
 </head>
 <body>
-    <video id="video" width="640" height="480" autoPlay={true} playsInline={true} muted={true}></video>
-    <canvas id="canvas" style="display: none;"></canvas>
     <h1>QR Code Scanner</h1>
-    <button id="scanButton">Scan QR Code</button>
-
-
+    <video id="video" width="640" height="480" autoPlay={true} playsInline={true} muted={true}></video>
     <script>
         const video = document.getElementById('video');
-        const scanButton = document.getElementById('scanButton');
 
-        // Request access to the user's camera when the scan button is clicked
-        scanButton.addEventListener('click', () => {
-            navigator.mediaDevices.getUserMedia({
-                video: { facingMode: "environment" }
-            })
-            .then(stream => {
-                // Set the video element's source to the camera stream and show the video element
-                video.srcObject = stream;
-                video.style.display = 'block';
-                video.play();
-
-                // Hide the scan button
-                scanButton.style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Could not access the camera. Error:', error);
-            });
+        // Request access to the user's camera
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: {
+                    exact: "environment"
+                }
+            }
+        })
+        .then(stream => {
+            // Set the video element's source to the camera stream
+            video.srcObject = stream;
+            video.play();
+        })
+        .catch(error => {
+            console.error('Could not access the camera. Error:', error);
         });
 
         // Listen for the "loadedmetadata" event to set up the canvas
@@ -65,4 +58,3 @@
         });
     </script>
 </body>
-</html>
