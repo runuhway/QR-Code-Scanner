@@ -14,47 +14,58 @@
 </head>
 <body>
     <h1>QR Code Scanner</h1>
-    <video id="video" width="640" height="480" autoPlay={true} playsInline={true} muted={true}></video>
+    <button id="scanButton">Scan QR Code</button>
+    <video id="video"></video>
+    <canvas id="canvas" style="display: none;"></canvas>
     <script>
         const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const scanButton = document.getElementById('scanButton');
 
-        // Request access to the user's camera
-        navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: {
-                    exact: "environment"
+        // Request access to the user's camera when the scan button is clicked
+        scanButton.addEventListener('click', () => {
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: {
+                        exact: "environment"
+                    }
                 }
-            }
-        })
-        .then(stream => {
-            // Set the video element's source to the camera stream
-            video.srcObject = stream;
-            video.play();
-        })
-        .catch(error => {
-            console.error('Could not access the camera. Error:', error);
+            })
+            .then(stream => {
+                // Set the video element's source to the camera stream and show the video element
+                video.srcObject = stream;
+                video.style.display = 'block';
+                video.play();
+
+                // Hide the scan button
+                scanButton.style.display = 'none';
+
+                // Show the canvas element and start scanning for QR codes
+                canvas.style.display = 'block';
+                scanForQrCode();
+            })
+            .catch(error => {
+                console.error('Could not access the camera. Error:', error);
+            });
         });
 
-        // Listen for the "loadedmetadata" event to set up the canvas
-        video.addEventListener('loadedmetadata', () => {
-            const canvas = document.createElement('canvas');
+        // Function to scan for QR codes
+        const scanForQrCode = () => {
+            const ctx = canvas.getContext('2d');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            const scan = () => {
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: 'dontInvert'
-                });
-                if (code) {
-                    console.log('Found QR code:', code.data);
-                    // Do something with the QR code data, e.g. redirect to the scanned URL
-                    window.location.href = code.data;
-                }
-                requestAnimationFrame(scan);
-            };
-            requestAnimationFrame(scan);
-        });
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, {
+                inversionAttempts: 'dontInvert'
+            });
+            if (code) {
+                console.log('Found QR code:', code.data);
+                // Do something with the QR code data, e.g. redirect to the scanned URL
+                window.location.href = code.data;
+            }
+            requestAnimationFrame(scanForQrCode);
+        };
     </script>
 </body>
+</html>
