@@ -23,7 +23,7 @@
         scanButton = document.getElementById('scanButton');
 
         // Request access to the user's camera when the scan button is clicked
-        //scanButton.addEventListener('click', () => {
+        scanButton.addEventListener('click', () => {
             navigator.mediaDevices.getUserMedia({
                 video: {
                     facingMode: {
@@ -47,7 +47,7 @@
             .catch(error => {
                 console.error('Could not access the camera. Error:', error);
             });
-       // });
+        });
 
         // Function to scan for QR codes
         const scanForQrCode = () => {
