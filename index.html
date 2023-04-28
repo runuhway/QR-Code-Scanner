@@ -15,7 +15,7 @@
 <body>
     <h1>QR Code Scanner</h1>
     <button id="scanButton">Scan QR Code</button>
-    <video id="video"></video>
+    <video id="video" width="640" height="480" autoPlay={true} playsInline={true} muted={true}></video>
     <canvas id="canvas" style="display: none;"></canvas>
     <script>
         const video = document.getElementById('video');
