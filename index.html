@@ -23,11 +23,7 @@
         // Request access to the user's camera when the scan button is clicked
         scanButton.addEventListener('click', () => {
             navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: {
-                        exact: "environment"
-                    }
-                }
+                video: { facingMode: "environment" }
             })
             .then(stream => {
                 // Set the video element's source to the camera stream and show the video element
